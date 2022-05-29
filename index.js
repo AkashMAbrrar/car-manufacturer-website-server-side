@@ -18,12 +18,19 @@ async function run() {
     try {
         await client.connect();
         const serviceCollection = client.db('carparts_stock').collection('orders');
+        const purchaseCollection = client.db('carparts_stock').collection('purchases');
 
         app.get('/service', async (req, res) => {
             const query = {};
             const cursor = serviceCollection.find(query);
             const services = await cursor.toArray();
             res.send(services);
+        });
+
+        app.post('/purchase', async (req, res) => {
+            const purchase = req.body;
+            const result = await purchaseCollection.insertOne(purchase);
+            res.send(result);
         })
     }
     finally {
