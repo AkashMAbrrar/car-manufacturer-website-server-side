@@ -31,6 +31,13 @@ async function run() {
             const purchase = req.body;
             const result = await purchaseCollection.insertOne(purchase);
             res.send(result);
+        });
+
+        app.get('/purchase', async (req, res) => {
+            const buyer = req.query.buyer;
+            const query = { buyer: buyer };
+            const orders = await purchaseCollection.find(query).toArray();
+            res.send(orders);
         })
     }
     finally {
