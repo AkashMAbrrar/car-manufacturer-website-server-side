@@ -19,12 +19,25 @@ async function run() {
         await client.connect();
         const serviceCollection = client.db('carparts_stock').collection('orders');
         const purchaseCollection = client.db('carparts_stock').collection('purchases');
+        const userCollection = client.db('carparts_stock').collection('users');
 
         app.get('/service', async (req, res) => {
             const query = {};
             const cursor = serviceCollection.find(query);
             const services = await cursor.toArray();
             res.send(services);
+        });
+
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const filter = { email: email };
+            const user = req.body;
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
         });
 
         app.post('/purchase', async (req, res) => {
